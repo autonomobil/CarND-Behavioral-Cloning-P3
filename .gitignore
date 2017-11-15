@@ -1,12 +1,13 @@
 data
 .ipynb_checkpoints
-CNNs
-traffic-signs-data
-new_imgs
-windows_sim
 me_data
+me_data2
+me_data3
+me_data4
+me_track2_data
+me_track2_data2
 SIMULATOR
-normalized_traindata
+traindata
 models
-
+__pycache__
 
