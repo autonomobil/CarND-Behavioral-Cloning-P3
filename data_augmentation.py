@@ -11,10 +11,10 @@ def create_augmen_img_byflip(img, steering):
     steering = -steering
     return img, steering
 
-def create_augmen_img_bytransform(img,  plot = 0, range_colorshift = 0.1, warp_factor= 3, range_zoom = 0.08, range_rotate = 8,  range_shift = 2):
+def create_augmen_img_bytransform(img,  plot = 0, range_colorshift = 0.1, brightness_or_colorshift = 1, warp_factor= 3, range_zoom = 0.08, range_rotate = 8,  range_shift = 2):
 
     img.setflags(write=1)
-    img = colorshift(img, range_colorshift, brightness_or_colorshift = 0)
+    img = colorshift(img, range_colorshift, brightness_or_colorshift)
     img = warp(img,warp_factor)
     img = zoom(img,range_zoom)
     img = rotate(img, range_rotate)

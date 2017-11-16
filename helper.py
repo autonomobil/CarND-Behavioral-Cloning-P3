@@ -30,7 +30,7 @@ def get_logs(data_paths):
 def clean_logs(logs, num_bins = 100, plot_distribution = 0, factor_max = 1.5):
     steering = np.asfarray(logs[:,3])
     #windows....
-    print("cleaning...")
+    print("data cleaning...")
     # Use the angle to determine probability of deleting imgs
     # angle smaller -> probability higher
     hist, bins = np.histogram(steering, num_bins)
@@ -57,7 +57,7 @@ def clean_logs(logs, num_bins = 100, plot_distribution = 0, factor_max = 1.5):
             delete_this = np.append(delete_this, choices)
     delete_this = np.asarray(delete_this, dtype= int)
     print()
-    print("++++++DELETION")
+    print("DELETION")
     print("length delete_this", len(delete_this))
     print("log entries before cleaning shape:", logs.shape)
     logs = np.delete(logs, delete_this, axis=0)
@@ -95,7 +95,13 @@ def load_img(sample, perspective, steering_correction = 0.2):
 
 
 def augment_img(img):
-    new_img = create_augmen_img_bytransform(img, range_colorshift = 0.2, warp_factor= 0, range_zoom = 0.05, range_rotate = 0,  range_shift = 0)
+
+    rand = np.random.random() # decide randomly if augment flipped or normal img
+    if rand >= 0.5:
+        brightness_or_colorshift = 0
+    else:
+        brightness_or_colorshift = 1
+    new_img = create_augmen_img_bytransform(img, range_colorshift = 0.2, brightness_or_colorshift= brightness_or_colorshift, warp_factor= 0, range_zoom = 0.00, range_rotate = 0,  range_shift = 0)
     return new_img
 
 

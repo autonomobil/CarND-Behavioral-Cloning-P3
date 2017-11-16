@@ -1,55 +1,105 @@
+[//]: # (Image References)
+
+[image1]: ./images/Data_Distribution.png "Data Distribution"
+[image2]: ./images/example1.jpg "example from dataset"
+[image3]: ./images/example2.jpg "example from dataset"
+[image4]: ./images/example3.jpg "example from dataset"
+---
 # SDCND Project 3: Behavioral Cloning
+## Succeeded in track 1 & 2 with one model!
+---
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
+## 1. Overview
+###1.1 Goal:
+* Develop an end-to-end approach for a self-driving car in a simulated environment
+* end-to-end means: The model gets camera images as input and controls the vehicle with the steering angle as output. No manual extraction of features or route planning needed. [Similar to NVIDIA](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) or [comma.ai](https://arxiv.org/abs/1608.01230) approach.
+* Model must drive the car at least 1 round in track 1
+* As challenge: Let the model drive the car in track 2
 
-**Behavioral Cloning Project**
+###1.2 Approach:
+* Literature research:
+    * [NVIDIAs paper on their approach ](https://arxiv.org/abs/1604.07316)
+    * [Sentdex' Python Plays GTA V project](https://psyber.io/).
+    * [Siraj Raval' Video on this topic](https://www.youtube.com/watch?v=EaY5QiZwSP4&t=4s)
+    * Slack/Forum of Udacity
+* Use the provided Udacity simulator to collect data of good driving behavior as training data
+* Build a convolution neural network in Keras that predicts steering angles from images
+* Train and validate the model with the training and validation set
+* Test the models autonomous functionality in track 1 in the simulation and check if it behaves correctly
+* Change network architecture and data pipeline if necessary
+* Train and test the model in track 2
+* Repeat until *one* model can drive the car in track 1 and track 2
 
-The goals / steps of this project are the following:
-* Use the simulator to collect data of good driving behavior
-* Build, a convolution neural network in Keras that predicts steering angles from images
-* Train and validate the model with a training and validation set
-* Test that the model successfully drives around track one without leaving the road
-* Summarize the results with a written report
-
-
-[//]: # (Image References)
-
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
-
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
-
----
-###Files Submitted & Code Quality
-
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+###1.3 Content of this project
 
 My project includes the following files:
 * model.py containing the script to create and train the model
+* helper.py containing various helper functions used by model.py
+* data_augmentation.py is an universal image augmentation functions, gets called
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network
 * writeup_report.md or writeup_report.pdf summarizing the results
-https://www.youtube.com/watch?v=EaY5QiZwSP4&t=4s
-####2. Submission includes functional code
+* [link for the acquired and used training data](https://mega.nz/#F!REtxTTwZ)
+
+
+###1.4 How to run the model
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
 ```sh
 python drive.py model.h5
 ```
+Python, Keras and all dependencies must be installed.
 
-####3. Submission code is usable and readable
+###1.5 What's inside model.py?
 
 The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
-###Model Architecture and Training Strategy
+---
+##2. Dataset exploration, acquisition, cleaning and augmentation
+###2.1 Exploration
+Udacity provided a dataset with 24108 images (24108 / 3 perspectives = 8036 scene samples) for track 1, which was very helpful. They are 320 pixels width * 160 pixels height and taken from 3 perspectives by virtual cameras (center, left, right).
 
-####1. An appropriate model architecture has been employed
+Exploration of the dataset lead to the some observations:
+* Simple and similar graphics, easy to learn but danger of overfitting.
+* Track 1 is clockwise round track with almost all curves being left - unbalanced, left-heavy dataset.
+* Track 2 is very different looking, with lots of sharp bends and vertical up and downs. Developing a model to generalize and drive both tracks will be challenging
+
+
+### 2.2 Acquisition
+For track 1 17259 images were acquired by using a joystick as input. Here I came across the first problem: Unity doesn't take the (Windows-)calibrated signals from a joystick, solution see [here(forum)](https://discussions.udacity.com/t/using-a-joystick-in-the-simulator-wrong-calibrated/423354/5). The acquired data contains 2 laps of track 1, also 2 in reverse and different critical scene, like the bridge, the curve after the bridge,. etc. Folders are: me_data, me_data2, me_data3, me_data4
+
+For track 2 21933 images were acquired, this are 4 complete laps driving as near to the middle line as possible.
+Folders are: me_track2_data, me_track2_data
+
+Example of a scene sample(center, left, right):
+
+![image2] ![image3] ![image4]
+### 2.3 Cleaning
+Most of the samples driving straight which leads to a *big* bias for going straight. A function was implemented, which deletes as much sample as there over the maximum in one bin.
+
+The histogram shows:
+* blue: distribution before cleaning,
+* orange : distribution after cleaning.
+
+
+![image1]
+Note: y axis is logarithmic
+
+### 2.4 Data augmentation
+To provide more data (more data is *always* better) and reduce shortcomings in the dataset, several data augmentation techniques were used. This enables the extraction of more information which helps prevent overfitting and getting generalization. A general image augmentation function data_augmentation.py was implemented and used.
+
+Used techniques (every technique outputs a new image):
+* Use the left and right camera image, correct the steering angle with a factor of 0.175
+* Flip (np.fliplr) the image and mupltiply steering angle with -1
+* Use create_augmen_img_bytransform inside data_augmentation.py, which with the settings I used apply:  
+    * a random color/brightness-shift
+    * a small zoom of -/+ 5 %
+
+These techniques are called inside the generator for the fit_generator, will be described below.
+
+##3.Network Architecture and Training Strategy
+###3.1 Network Architecture
 
 My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24)
 
