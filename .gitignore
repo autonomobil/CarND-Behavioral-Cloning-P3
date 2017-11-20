@@ -6,9 +6,11 @@ me_data3
 me_data4
 me_track2_data
 me_track2_data2
+me_track2_data3
 SIMULATOR
 traindata
 models
 __pycache__
 Graph
 error
+test.py

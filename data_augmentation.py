@@ -43,6 +43,8 @@ def colorshift(img, range_colorshift, brightness_or_colorshift):
             for color in range(3):
                 rand_shift = np.random.uniform(1 - range_colorshift, 1)
                 img[:,:,color ] = img [:,:,color ] * rand_shift
+
+        img = np.asarray(img, dtype=np.uint8)
     return img
 
 def warp(img,warp_factor):
