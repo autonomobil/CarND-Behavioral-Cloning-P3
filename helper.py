@@ -175,7 +175,7 @@ def load_img(sample, perspective, steering_correction = 0.2):
 def crop_resize_img(img):
     img = img[69:149, :]
 
-    img = cv2.resize(img,(160,160))
+    img = cv2.resize(img,(128,128))
 
     return img
 

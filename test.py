@@ -13,7 +13,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from helper import *
 
-data_path ='./me_track2_data'
+data_path ='./me_track2_data3'
 
 logs = []
 input_file = csv.reader(open(data_path + '/driving_log.csv'))
@@ -51,7 +51,7 @@ def angle_line(input_img, angle):
     liney = (y0,y1)
     return linex, liney
 
-for log in logs[1000:]:
+for log in logs[100:]:
     plt.figure(figsize=(12, 6), facecolor='w', edgecolor='k')
     orig_img, angle = load_img(log, perspective = pers , steering_correction = 0.2)
     plt.subplot(221)

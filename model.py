@@ -22,7 +22,7 @@ from data_augmentation import create_augmen_img_byflip
 
 ################################
 batch_size = 50
-augmented_per_sample = 1
+augmented_per_sample = 0
 plot_distribution = 0
 use_all_perspectives = 0
 model_loader = 'my_model'
