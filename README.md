@@ -215,3 +215,5 @@ This process significantly increased the performance in critical scenes.
 The model was then again tested by running it through the simulator and ensuring that the vehicle could stay on the track. Here an interesting point was discovered: A small validation loss doesn't mean the model makes it succesfully trough both tracks, sometimes models with a higher validation loss performed better than the one with lower validation loss. An explanation for this could be: If all the validation loss is accumulated in then "extreme" scenes, where the steering angle is very high, the model performs weaker in the sharp turns in track 2 as a model with validation loss is distributed over all scenes. A investigation in this topic could be interesting.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+
+[youtube link for video of track 1 & 2 self-driven](https://www.youtube.com/watch?v=CqWSQ0OdBYE&list=PLT4_vNeVR74lCL9pbwh6b1csRqTj63MfU&index=4)
