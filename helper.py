@@ -135,63 +135,6 @@ def region_of_interest(img, vertices):
     masked_image = cv2.bitwise_and(img, mask)
     return masked_image
 
-
-def dynamic_crop(img, view_field, angle, perspective):
-
-    center = 160 * (1 + angle)
-    top_l = center - view_field/2
-    top_r = center + view_field/2
-    if perspective == 0:
-        bottom_left_x = 0
-        bottom_left_y = 160
-        bottom_left_x2 = 20
-        bottom_left_y2 = 160
-
-        carfront_l_x = 120
-        carfront_l_y = 140
-
-        carfront_r_x = 180
-        carfront_r_y = 140
-
-        bottom_right_x = 300
-        bottom_right_y = 160
-        bottom_right_x2 = 320
-        bottom_right_y2 = 160
-
-    elif perspective > 0:
-        bottom_left_x = 0
-        bottom_left_y = 140
-        bottom_left_x2 = 0
-        bottom_left_y2 = 140
-
-        carfront_l_x = 100
-        carfront_l_y = 140
-
-        carfront_r_x = 200
-        carfront_r_y = 140
-
-        bottom_right_x = 320
-        bottom_right_y = 140
-        bottom_right_x2 = 320
-        bottom_right_y2 = 140
-
-    # top left, top right, bottom left, bottom right
-    vertices = np.array([[(bottom_left_x, bottom_left_y),
-                            (bottom_left_x2, bottom_left_y2),
-                            (carfront_l_x,carfront_l_y),
-                            (carfront_r_x,carfront_r_y),
-                            (bottom_right_x, bottom_right_y),
-                            (bottom_right_x2, bottom_right_y2),
-                            (320, 90),
-                            (top_r, 70),
-                            (top_l, 70),
-                            (0, 90)]],
-                        dtype=np.int32)
-    # mask region
-    img = region_of_interest(img, vertices)
-
-    return img
-
 def increase_contrast(img, clipLimit, tileGridSize):
 
     # # Converting image to LAB Color model
@@ -230,30 +173,9 @@ def load_img(sample, perspective, steering_correction = 0.2):
 
 
 def crop_resize_img(img):
-    # if dyn_crop:
-    #     img = dynamic_crop(img, view_field = 180, angle = angle, perspective = perspective)
-
     img = img[69:149, :]
 
     img = cv2.resize(img,(160,160))
-
-    ####################
-    # orig_img = img.copy()
-    # img = gaussian_blur(img, 3)
-    # # define range of color in HSV normal gray
-    # lower_gray = np.array([0,0,0])
-    # upper_gray = np.array([179,100,255])
-    # img = colormask(img,lower_gray,upper_gray)
-    # #
-    # # white light gray asphalt
-    # lower_white= np.array([0,0,170])
-    # upper_white = np.array([179,20,255])
-    # img_masked2 = colormask(img,lower_white,upper_white)
-    #
-    # img = weighted_img(img_masked2, img_masked1,0.5,2)
-    #
-    # img = weighted_img(orig_img, img, 0.5,0.6)
-    ##########################
 
     return img
 

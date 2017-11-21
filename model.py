@@ -22,10 +22,10 @@ from data_augmentation import create_augmen_img_byflip
 
 ################################
 batch_size = 50
-augmented_per_sample = 0
+augmented_per_sample = 1
 plot_distribution = 0
 use_all_perspectives = 0
-model_loader = './models/best-0.0241.h5'
+model_loader = 'my_model'
 
 # define input shape for CNN
 input_shape = (160,320,3)
@@ -57,12 +57,9 @@ nb_perspectives = 1
 if use_all_perspectives:
     nb_perspectives = 3
 
-global sample_check
-sample_check = []
-
 ################################
 # defition of generator
-def generator(samples, batch_size, augmented_per_sample,training = 0):
+def generator(samples, batch_size, augmented_per_sample):
     shuffle(samples)
 
     while 1:
@@ -75,8 +72,6 @@ def generator(samples, batch_size, augmented_per_sample,training = 0):
             steering = []
 
             for sample in batch:
-                if training:
-                    sample_check.append(sample)
 
                 #iterate over perspectives if use_all_perspectives = 1
                 for pers in range(nb_perspectives):
@@ -106,8 +101,8 @@ def generator(samples, batch_size, augmented_per_sample,training = 0):
             yield shuffle(Xtrain, ytrain)
 
 # create generators for training and validation
-train_gen = generator(train_logs, batch_size = batch_size, augmented_per_sample = augmented_per_sample, training =1)
-valid_gen = generator(valid_logs, batch_size = batch_size, augmented_per_sample = 0, training = 0)
+train_gen = generator(train_logs, batch_size = batch_size, augmented_per_sample = augmented_per_sample)
+valid_gen = generator(valid_logs, batch_size = batch_size, augmented_per_sample = 0)
 
 ################################
 if model_loader == 'my_model':
@@ -115,32 +110,20 @@ if model_loader == 'my_model':
     model = Sequential()
     model.add(Cropping2D(cropping=((70,10),(0,0)), input_shape = input_shape))
     model.add(Lambda(resize_img))
-    model.add(Lambda(lambda x: (x/255 - 0.5)*2, input_shape = input_shape))
-
+    model.add(Lambda(lambda x: (x/255 - 0.5)*2))
     model.add(Conv2D(3, kernel_size = 1, strides = 1, padding="same"))
 
-    model.add(Conv2D(32, kernel_size = 7, padding="same", strides = 2, kernel_regularizer=regularizers.l2(0.001)))
+    model.add(Conv2D(32, kernel_size = 7, strides = 2, padding="same", kernel_regularizer=regularizers.l2(0.001)))
     model.add(ELU(alpha=0.1))
     model.add(Conv2D(32, kernel_size = 7, strides = 2, kernel_regularizer=regularizers.l2(0.0001)))
     model.add(ELU(alpha=0.1))
-    # model.add(AveragePooling2D())
-    # model.add(BatchNormalization())
     model.add(Dropout(0.3))
 
-    model.add(Conv2D(64, kernel_size = 5, padding="same", strides = 1, kernel_regularizer=regularizers.l2(0.001)))
+    model.add(Conv2D(64, kernel_size = 5, strides = 1, padding="same", kernel_regularizer=regularizers.l2(0.001)))
     model.add(ELU(alpha=0.1))
     model.add(Conv2D(64, kernel_size = 3, strides = 1, kernel_regularizer=regularizers.l2(0.001)))
     model.add(ELU(alpha=0.1))
-    # model.add(AveragePooling2D()
-    # model.add(BatchNormalization())
     model.add(Dropout(0.5))
-    #
-    # model.add(Conv2D(128, kernel_size = 3, strides = 1, padding="same"))
-    # model.add(LeakyReLU(alpha=0.1))
-    # model.add(Conv2D(128, kernel_size = 3, strides = 1, kernel_regularizer=regularizers.l2(0.01)))
-    # model.add(LeakyReLU(alpha=0.1))
-    # model.add(AveragePooling2D())
-    # model.add(Dropout(0.6))
 
     model.add(Flatten())
 
@@ -158,7 +141,6 @@ if model_loader == 'my_model':
     optimizer = Adam(lr=1e-4)
     model.compile(optimizer=optimizer, loss='mse')
 
-
 elif model_loader == 'nvidia':
 
     model = Sequential()
@@ -172,19 +154,14 @@ elif model_loader == 'nvidia':
     # NVIDIA model
     model.add(Conv2D(24, kernel_size = 5, strides = 2))
     model.add(LeakyReLU(alpha=0.1))
-    #
     model.add(Conv2D(36, kernel_size = 5, strides = 2))
     model.add(LeakyReLU(alpha=0.1))
-    # model.add(BatchNormalization())
     model.add(Conv2D(48, kernel_size = 5, strides = 2))
     model.add(LeakyReLU(alpha=0.1))
-    # model.add(BatchNormalization())
     model.add(Conv2D(64, kernel_size = 3, strides = 1))
     model.add(LeakyReLU(alpha=0.1))
-    # model.add(BatchNormalization())
     model.add(Conv2D(64, kernel_size = 3, strides = 1))
     model.add(LeakyReLU(alpha=0.1))
-    # model.add(BatchNormalization())
 
     model.add(Flatten())
 
@@ -252,15 +229,6 @@ history_object = model.fit_generator(generator = train_gen,
                                     callbacks =[checkpoint, early_stopping],
                                     epochs = 15)
 
-### plot the training and validation loss for each epoch
-# train_logs.sort()
-# sample_check.sort()
-
-# if np.all(train_logs == sample_check):
-#     print("SUCCESS")
-# else:
-#     print("failure")
-
 plt.plot(history_object.history['loss'])
 plt.plot(history_object.history['val_loss'])
 plt.title('model mean squared error loss')
@@ -277,7 +245,3 @@ timestemp = strftime("%H-%M-%S", localtime())
 with open('./models/summary-{}.txt'.format(timestemp),'w') as fh:
     # Pass the file handle in as a lambda function to make it callable
     model.summary(print_fn=lambda x: fh.write(x + '\n'))
-
-# del history_object
-# del model
-# K.clear_session()
