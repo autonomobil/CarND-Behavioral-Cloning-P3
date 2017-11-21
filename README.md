@@ -17,6 +17,7 @@
 
 # SDCND Project 3: Behavioral Cloning
 ## 20 mph on track 1 & 2 with one model!
+[youtube link for video of track 1 & 2 self-driven](https://www.youtube.com/watch?v=CqWSQ0OdBYE)
 ---
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
@@ -53,7 +54,7 @@ My project includes the following files:
 * model.h5 containing a trained convolution neural network
 * README.md summarizing the project
 * car-view video of track 1 & 2 track1.mp4 & track2.mp4, same model
-* [youtube link for the recorded video of track 1 & 2 self-driven with music!](https://www.youtube.com/watch?v=CqWSQ0OdBYE)
+*
 
 
 ### 1.4 How to run the model
