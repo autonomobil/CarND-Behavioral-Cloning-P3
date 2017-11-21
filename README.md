@@ -52,7 +52,8 @@ My project includes the following files:
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network
 * README.md summarizing the project
-* [link for the recorded video of track 1 & 2 self-driven](https://www.youtube.com/watch?v=CqWSQ0OdBYE)
+* car-view video of track 1 & 2 track1.mp4 & track2.mp4, same model
+* [youtube link for the recorded video of track 1 & 2 self-driven with music!](https://www.youtube.com/watch?v=CqWSQ0OdBYE)
 
 
 ### 1.4 How to run the model
