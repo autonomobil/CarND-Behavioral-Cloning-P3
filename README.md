@@ -54,7 +54,7 @@ My project includes the following files:
 * model.h5 containing a trained convolution neural network
 * README.md summarizing the project
 * car-view video of track 1 & 2 track1.mp4 & track2.mp4, same model
-*
+* [link for my recorded data (mega.nz)](https://mega.nz/#F!REtxTTwZ)
 
 
 ### 1.4 How to run the model
