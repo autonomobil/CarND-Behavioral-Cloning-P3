@@ -197,7 +197,7 @@ where as
 This ensures that every sample with every choosen augmentation technique is used. For validation the "augmented_per_image" is set to zero.
 
 
-###3.5 Training & Validation
+### 3.5 Training & Validation
 For the first training run the 13946 samples after cleaning and spliting were flipped, supplemented with the left & right images and augmented with 1 augmented image per sample. So all in all 167352 images for training.
 This diagram shows the progress of training & validation loss:
 
@@ -211,7 +211,7 @@ The idea for this was: It's good to have a lot of sample to train the model to h
 This process significantly increased the performance in critical scenes.
 
 
-###3.6 Testing in the simulator
+### 3.6 Testing in the simulator
 The model was then again tested by running it through the simulator and ensuring that the vehicle could stay on the track. Here an interesting point was discovered: A small validation loss doesn't mean the model makes it succesfully trough both tracks, sometimes models with a higher validation loss performed better than the one with lower validation loss. An explanation for this could be: If all the validation loss is accumulated in then "extreme" scenes, where the steering angle is very high, the model performs weaker in the sharp turns in track 2 as a model with validation loss is distributed over all scenes. A investigation in this topic could be interesting.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
