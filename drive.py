@@ -74,7 +74,7 @@ def telemetry(sid, data):
             print('not averaging')
         else:
             angle_array[:-1] = angle_array[1:]
-            angle_array[-1] = steering_angle
+            angle_array[-1:] = steering_angle
             steering_angle = movingAverage(angle_array, steering_angle)
 
         throttle = controller.update(float(speed))
